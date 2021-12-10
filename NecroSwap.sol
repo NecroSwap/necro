@@ -1,7 +1,3 @@
-/**
- *Submitted for verification at FtmScan.com on 2021-12-09
-*/
-
 // SPDX-License-Identifier: MIT
 
 pragma solidity 0.8.8;
@@ -1627,11 +1623,11 @@ contract NecroToken is ERC20Permit, Ownable {
 
     constructor() ERC20("NecroToken", "NECRO") ERC20Permit("NecroToken")
     {
-        address _Owner = address(0xd4baa58A151Ac474645d987eeacE1BDA0fFcdE5B);
-        _transferOwnership(_Owner);
+        // address _Owner = address(0xd4baa58A151Ac474645d987eeacE1BDA0fFcdE5B);
+        _transferOwnership(msg.sender);
         uint256 initialSupply = 25e18;
-        _mint(_Owner, initialSupply); //initial 25 NECRO to owner
-        _moveDelegates(address(0), _Owner, initialSupply);
+        _mint(msg.sender, initialSupply); //initial 25 NECRO to owner
+        _moveDelegates(address(0), msg.sender, initialSupply);
     }
 
     uint256 constant private _maxTotalSupply = 10000000e18; // 10,000,000 max necros
