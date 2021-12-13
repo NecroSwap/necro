@@ -1951,9 +1951,12 @@ contract MasterChef is Ownable {
     // Total allocation points. Must be the sum of all allocation points in all pools.
     uint256 public totalAllocPoint = 0;
     // The block time when necro mining starts.
-    uint256 public immutable startTime;
+    uint256 public startTime;
     // NECRO single pool deposited amount record
     uint256 public _lpSupply;
+    // initialized
+    bool public initalized;
+    uint8 public initialCount;
 
     event Deposit(address indexed user, uint256 indexed pid, uint256 amount);
     event Withdraw(address indexed user, uint256 indexed pid, uint256 amount);
@@ -1970,6 +1973,17 @@ contract MasterChef is Ownable {
         startTime = _startTime;
         // address _Owner = address(0xd4baa58A151Ac474645d987eeacE1BDA0fFcdE5B);
         _transferOwnership(msg.sender);
+    }
+    
+    // allow 2 times update
+    function initialize(uint256 _startTime) public onlyOwner {
+        require(initalized != true);
+        require(block.timestamp < _startTime);
+        startTime = _startTime;
+        initialCount++;
+        if (initialCount > 1) {
+            initalized = true;
+        }
     }
 
     function poolLength() external view returns (uint256) {
@@ -2028,7 +2042,7 @@ contract MasterChef is Ownable {
 
     // Change the given pool's fee rate. Can only be called by the owner.
     // limited the fee rate cannot be greater than 10%
-    function changePooFeeRate(uint256 _pid, uint256 _newRate) external onlyOwner {
+    function changePooFeeRate(uint256 _pid, uint256 _newRate) external onlyOwner{
         PoolInfo storage pool = poolInfo[_pid];
         require(pool.chargeFeeRate != _newRate && _newRate <= 100, "changePooFeeRate: rate value invalid");
         pool.chargeFeeRate = _newRate;
@@ -2104,7 +2118,7 @@ contract MasterChef is Ownable {
 
     // Deposit LP tokens to MasterChef for NECRO allocation.
     // Deposit tokens will charge fee from user
-    function deposit(uint256 _pid, uint256 _amount) public {
+    function deposit(uint256 _pid, uint256 _amount) public  {
 
         PoolInfo storage pool = poolInfo[_pid];
         UserInfo storage user = userInfo[_pid][msg.sender];
